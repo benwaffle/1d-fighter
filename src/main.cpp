@@ -22,7 +22,7 @@ typedef struct {
 
 player players[2] = {
     { .pos = 2, .len = 4, .last_move = 0 },
-    { .pos = 8, .len = 4, .last_move = 0 },
+    { .pos = 10, .len = 4, .last_move = 0 },
 };
 
 void flush() {
@@ -55,6 +55,22 @@ void moveRight(int playerNum) {
     }
 }
 
+void punch(int attacker) {
+    int victim = (attacker == 0) ? 1 : 0;
+    player& a = players[attacker];
+    player& v = players[victim];
+    if ((v.pos <= a.pos && a.pos < v.pos + v.len) // a start in v
+     || (a.pos <= v.pos && v.pos < a.pos + a.len) // v start in a
+     || (v.pos + v.len) % N_LEDS == a.pos
+     || (a.pos + a.len) % N_LEDS == v.pos)
+    {
+        Serial.print(attacker);
+        Serial.print(" punches ");
+        Serial.print(victim);
+        Serial.println();
+    }
+}
+
 void setup() {
     pinMode(P0_LEFT_BUT, INPUT_PULLUP);
     pinMode(P0_RIGHT_BUT, INPUT_PULLUP);
@@ -71,43 +87,63 @@ void setup() {
 }
 
 void loop() {
+    bool move = false;
     if (millis() - players[0].last_move > 300) {
         if (digitalRead(P0_LEFT_BUT) == LOW) {
+            move = true;
             moveLeft(0);
             Serial.println("P0 left");
             players[0].last_move = millis();
         }
 
         if (digitalRead(P0_RIGHT_BUT) == LOW) {
+            move = true;
             moveRight(0);
             Serial.println("P0 right");
+            players[0].last_move = millis();
+        }
+
+        if (digitalRead(P0_PUNCH_BUT) == LOW) {
+            move = true;
+            punch(0);
             players[0].last_move = millis();
         }
     }
 
     if (millis() - players[1].last_move > 300) {
         if (digitalRead(P1_LEFT_BUT) == LOW) {
+            move = true;
             moveLeft(1);
             Serial.println("P1 left");
             players[1].last_move = millis();
         }
 
         if (digitalRead(P1_RIGHT_BUT) == LOW) {
+            move = true;
             moveRight(1);
             Serial.println("P1 right");
             players[1].last_move = millis();
         }
+
+        if (digitalRead(P1_PUNCH_BUT) == LOW) {
+            move = true;
+            punch(1);
+            players[1].last_move = millis();
+        }
     }
+
 
     flush();
 
-    Serial.print("p0: at ");
-    Serial.print(players[0].pos);
-    Serial.print(" len ");
-    Serial.print(players[0].len);
-    Serial.print(", p1: at ");
-    Serial.print(players[1].pos);
-    Serial.print(" len ");
-    Serial.print(players[1].len);
-    Serial.println();
+    if (move) {
+        Serial.print("p0 at ");
+        Serial.print(players[0].pos);
+        Serial.print(" len ");
+        Serial.print(players[0].len);
+        Serial.print(", p1 at ");
+        Serial.print(players[1].pos);
+        Serial.print(" len ");
+        Serial.print(players[1].len);
+        Serial.println();
+    }
 }
