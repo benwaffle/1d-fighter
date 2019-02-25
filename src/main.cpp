@@ -37,6 +37,24 @@ void flush() {
     FastLED.show();
 }
 
+void win(int winner) {
+    CRGB color = (winner == 0) ? CRGB(1,0,0) : CRGB(0,0,1);
+
+    for (int i = 0; i < 20; ++i) {
+        for (int i = 0; i < N_LEDS; ++i)
+            leds[i] = color;
+        FastLED.show();
+        delay(50);
+        for (int i = 0; i < N_LEDS; ++i)
+            leds[i] = CRGB::Black;
+        FastLED.show();
+        delay(50);
+    }
+
+    players[0] = {.pos = 2, .len = 4, .last_move = 0};
+    players[1] = {.pos = 10, .len = 4, .last_move = 0};
+}
+
 void moveLeft(int playerNum) {
     player& p = players[playerNum];
     if (p.pos == 0) { // wrap
@@ -68,6 +86,10 @@ void punch(int attacker) {
         Serial.print(" punches ");
         Serial.print(victim);
         Serial.println();
+
+        v.len--;
+        if (victim == 1)
+            v.pos = (v.pos + 1) % N_LEDS;
     }
 }
 
@@ -132,7 +154,6 @@ void loop() {
         }
     }
 
-
     flush();
 
     if (move) {
@@ -145,5 +166,11 @@ void loop() {
         Serial.print(" len ");
         Serial.print(players[1].len);
         Serial.println();
+    }
+
+    if (players[0].len == 0) {
+        win(1);
+    } else if (players[1].len == 0) {
+        win(0);
     }
 }
