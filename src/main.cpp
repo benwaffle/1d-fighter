@@ -5,11 +5,11 @@
 
 #define EMPTY 0
 
-#define P1_RIGHT_BUT 8
-#define P1_LEFT_BUT 9
+#define P1_RIGHT_BUT 9
+#define P1_LEFT_BUT 8
 #define P1_PUNCH_BUT 10
-#define P0_RIGHT_BUT 11
-#define P0_LEFT_BUT 12
+#define P0_RIGHT_BUT 12
+#define P0_LEFT_BUT 11
 #define P0_PUNCH_BUT 13
 
 CRGB leds[N_LEDS];
@@ -22,8 +22,8 @@ typedef struct {
 } player;
 
 player players[2] = {
-    { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false },
     { .pos = 10, .len = 4, .last_move = 0, .holding_punch = false },
+    { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false },
 };
 
 void flush() {
