@@ -78,8 +78,12 @@ void punch(int attacker) {
     int victim = (attacker == 0) ? 1 : 0;
     player& a = players[attacker];
     player& v = players[victim];
-    if ((v.pos <= a.pos && a.pos < v.pos + v.len) // a start in v
-     || (a.pos <= v.pos && v.pos < a.pos + a.len) // v start in a
+    Serial.print(attacker);
+    Serial.print(" tries to punch ");
+    Serial.print(victim);
+    Serial.println();
+    if (((v.pos + v.len >= N_LEDS || v.pos <= a.pos) && a.pos < v.pos + v.len) // a start in v
+     || ((a.pos + a.len >= N_LEDS || a.pos <= v.pos) && v.pos < a.pos + a.len) // v start in a
      || (v.pos + v.len) % N_LEDS == a.pos
      || (a.pos + a.len) % N_LEDS == v.pos)
     {
