@@ -90,17 +90,21 @@ void punch(int attacker) {
         v.len--;
 
         if (a.pos < v.pos) { // move v right
-            int steps = (a.pos + a.len) - v.pos + 1;
+            int steps = (a.pos + a.len) - v.pos + 2;
+            Serial.print("moving v right ");
+            Serial.print(steps);
+            Serial.println(" times");
             v.pos += steps;
             v.pos %= N_LEDS;
         } else { // move v left
-            int steps = v.len - (a.pos - v.pos) + 1;
+            int steps = v.len - (a.pos - v.pos) + 2;
+            Serial.print("moving v left ");
+            Serial.print(steps);
+            Serial.println(" times");
             v.pos -= steps;
-            v.pos %= N_LEDS;
+            if (v.pos < 0)
+                v.pos += N_LEDS;
         }
-
-        if (victim == 1)
-            v.pos = (v.pos + 1) % N_LEDS;
     }
 }
 
