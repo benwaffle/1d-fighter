@@ -18,11 +18,12 @@ typedef struct {
     int pos;
     int len;
     unsigned long last_move;
+    bool holding_punch;
 } player;
 
 player players[2] = {
-    { .pos = 2, .len = 4, .last_move = 0 },
-    { .pos = 10, .len = 4, .last_move = 0 },
+    { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false },
+    { .pos = 10, .len = 4, .last_move = 0, .holding_punch = false },
 };
 
 void flush() {
@@ -51,8 +52,8 @@ void win(int winner) {
         delay(50);
     }
 
-    players[0] = {.pos = 2, .len = 4, .last_move = 0};
-    players[1] = {.pos = 10, .len = 4, .last_move = 0};
+    players[0] = { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false };
+    players[1] = { .pos = 10, .len = 4, .last_move = 0, .holding_punch = false };
 }
 
 void moveLeft(int playerNum) {
@@ -141,9 +142,14 @@ void loop() {
         }
 
         if (digitalRead(P0_PUNCH_BUT) == LOW) {
-            move = true;
-            punch(0);
-            players[0].last_move = millis();
+            if (!players[0].holding_punch) {
+                move = true;
+                punch(0);
+                players[0].holding_punch = true;
+                players[0].last_move = millis();
+            }
+        } else {
+            players[0].holding_punch = false;
         }
     }
 
@@ -163,9 +169,14 @@ void loop() {
         }
 
         if (digitalRead(P1_PUNCH_BUT) == LOW) {
-            move = true;
-            punch(1);
-            players[1].last_move = millis();
+            if (!players[1].holding_punch) {
+                move = true;
+                punch(1);
+                players[1].holding_punch = true;
+                players[1].last_move = millis();
+            }
+        } else {
+            players[1].holding_punch = false;
         }
     }
 
