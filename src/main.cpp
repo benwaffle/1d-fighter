@@ -78,34 +78,20 @@ void punch(int attacker) {
     int victim = (attacker == 0) ? 1 : 0;
     player& a = players[attacker];
     player& v = players[victim];
-    Serial.print(attacker);
-    Serial.print(" tries to punch ");
-    Serial.print(victim);
-    Serial.println();
+
     if (((v.pos + v.len >= N_LEDS || v.pos <= a.pos) && a.pos < v.pos + v.len) // a start in v
      || ((a.pos + a.len >= N_LEDS || a.pos <= v.pos) && v.pos < a.pos + a.len) // v start in a
      || (v.pos + v.len) % N_LEDS == a.pos
      || (a.pos + a.len) % N_LEDS == v.pos)
     {
-        Serial.print(attacker);
-        Serial.print(" punches ");
-        Serial.print(victim);
-        Serial.println();
-
         v.len--;
 
         if (a.pos < v.pos) { // move v right
             int steps = (a.pos + a.len) - v.pos + 2;
-            Serial.print("moving v right ");
-            Serial.print(steps);
-            Serial.println(" times");
             v.pos += steps;
             v.pos %= N_LEDS;
         } else { // move v left
             int steps = v.len - (a.pos - v.pos) + 2;
-            Serial.print("moving v left ");
-            Serial.print(steps);
-            Serial.println(" times");
             v.pos -= steps;
             if (v.pos < 0)
                 v.pos += N_LEDS;
@@ -121,33 +107,25 @@ void setup() {
     pinMode(P1_RIGHT_BUT, INPUT_PULLUP);
     pinMode(P1_PUNCH_BUT, INPUT_PULLUP);
 
-    Serial.begin(9600);
-
     FastLED.addLeds<NEOPIXEL, 2>(leds, N_LEDS);
 
     flush();
 }
 
 void loop() {
-    bool move = false;
     if (millis() - players[0].last_move > 300) {
         if (digitalRead(P0_LEFT_BUT) == LOW) {
-            move = true;
             moveLeft(0);
-            Serial.println("P0 left");
             players[0].last_move = millis();
         }
 
         if (digitalRead(P0_RIGHT_BUT) == LOW) {
-            move = true;
             moveRight(0);
-            Serial.println("P0 right");
             players[0].last_move = millis();
         }
 
         if (digitalRead(P0_PUNCH_BUT) == LOW) {
             if (!players[0].holding_punch) {
-                move = true;
                 punch(0);
                 players[0].holding_punch = true;
                 players[0].last_move = millis();
@@ -159,22 +137,17 @@ void loop() {
 
     if (millis() - players[1].last_move > 300) {
         if (digitalRead(P1_LEFT_BUT) == LOW) {
-            move = true;
             moveLeft(1);
-            Serial.println("P1 left");
             players[1].last_move = millis();
         }
 
         if (digitalRead(P1_RIGHT_BUT) == LOW) {
-            move = true;
             moveRight(1);
-            Serial.println("P1 right");
             players[1].last_move = millis();
         }
 
         if (digitalRead(P1_PUNCH_BUT) == LOW) {
             if (!players[1].holding_punch) {
-                move = true;
                 punch(1);
                 players[1].holding_punch = true;
                 players[1].last_move = millis();
@@ -185,18 +158,6 @@ void loop() {
     }
 
     flush();
-
-    if (move) {
-        Serial.print("p0 at ");
-        Serial.print(players[0].pos);
-        Serial.print(" len ");
-        Serial.print(players[0].len);
-        Serial.print(", p1 at ");
-        Serial.print(players[1].pos);
-        Serial.print(" len ");
-        Serial.print(players[1].len);
-        Serial.println();
-    }
 
     if (players[0].len == 0) {
         win(1);
