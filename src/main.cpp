@@ -31,9 +31,9 @@ void flush() {
         leds[i] = CRGB::Black;
 
     for (int j = players[0].pos; j < players[0].pos + players[0].len; ++j)
-        leds[j % N_LEDS] += CRGB(1,0,0);
+        leds[j % N_LEDS] += CRGB(20,0,0);
     for (int j = players[1].pos; j < players[1].pos + players[1].len; ++j)
-        leds[j % N_LEDS] += CRGB(0,0,1);
+        leds[j % N_LEDS] += CRGB(0,0,20);
 
     FastLED.show();
 }
