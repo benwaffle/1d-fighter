@@ -1,16 +1,16 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-#define N_LEDS 16
+#define N_LEDS 24
 
 #define EMPTY 0
 
-#define P1_LEFT_BUT 8
-#define P1_RIGHT_BUT 9
-#define P1_PUNCH_BUT 10
-#define P0_LEFT_BUT 11
-#define P0_RIGHT_BUT 12
-#define P0_PUNCH_BUT 13
+#define P0_LEFT_BUT 8
+#define P0_RIGHT_BUT 3
+#define P0_PUNCH_BUT 10
+#define P1_LEFT_BUT 11
+#define P1_RIGHT_BUT 12
+#define P1_PUNCH_BUT 13
 
 CRGB leds[N_LEDS];
 
@@ -22,8 +22,8 @@ typedef struct {
 } player;
 
 player players[2] = {
-    { .pos = 10, .len = 4, .last_move = 0, .holding_punch = false },
-    { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false },
+    { .pos = 4, .len = 5, .last_move = 0, .holding_punch = false },
+    { .pos = 15, .len = 5, .last_move = 0, .holding_punch = false },
 };
 
 void flush() {
@@ -52,8 +52,8 @@ void win(int winner) {
         delay(50);
     }
 
-    players[0] = { .pos = 2, .len = 4, .last_move = 0, .holding_punch = false };
-    players[1] = { .pos = 10, .len = 4, .last_move = 0, .holding_punch = false };
+    players[0] = { .pos = 4, .len = 5, .last_move = 0, .holding_punch = false };
+    players[1] = { .pos = 15, .len = 5, .last_move = 0, .holding_punch = false };
 }
 
 void moveLeft(int playerNum) {
@@ -123,7 +123,7 @@ void setup() {
 
     Serial.begin(9600);
 
-    FastLED.addLeds<NEOPIXEL, 7>(leds, N_LEDS);
+    FastLED.addLeds<NEOPIXEL, 2>(leds, N_LEDS);
 
     flush();
 }
